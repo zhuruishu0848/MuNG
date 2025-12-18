@@ -28,15 +28,12 @@ Place the MuNG-related code in the repositories, or adjust the script paths acco
 cp -r MuNG/datasets MuNG/noise_generator ./
 ```
 
----
-
 ###  Step 2. Install Dependencies
 
 Please follow the respective instructions to set up the environments:
 
 * [Qwen2.5-VL Quickstart](https://github.com/QwenLM/Qwen2.5-VL#Quickstart)
 
----
 
 ###  Step 3. Prepare Datasets
 
@@ -48,13 +45,13 @@ Then convert it to the format required by Qwen2.5-VL:
 ```bash
 python datasets/MMPR_shuffle.py
 ```
----
+
+
 ### Step 4. Download Weights
 
 Please download the pretrained weights of **Qwen2.5-VL** from [Qwen2.5-VL-3B-Instruct](https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct).
 After downloading, place the model weights into the `checkpoints/base/` directory.  
 
----
 
 ### Step 5. Fine-tuning
 
@@ -65,12 +62,12 @@ Select the appropriate script to fine-tune QwenVL2.5vl model with noise injectio
 bash noise_generator/finetune/MMPR-shuff/mmpr_finetune_ng.sh
 ```
 
----
+
 ### Step 6. Evaluation
 
 We use [VLMEvalKit](https://github.com/open-compass/VLMEvalKit) for evaluation.
 
----
+
 ## Acknowledgments
 
 This project is built upon the following open-source resources. Thanks for their excellent works.
