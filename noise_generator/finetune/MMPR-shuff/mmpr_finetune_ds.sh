@@ -9,7 +9,7 @@ MASTER_ADDR=localhost
 MASTER_PORT=6001
 
 MODEL="./checkpoints/base/Qwen2.5-VL-3B-Instruct" 
-DATA="datasets/MMPR/shuff_mmpr.jsonl"
+DATA="datasets/MMPR-v1.1/shuff_mmpr.jsonl"
 
 DISTRIBUTED_ARGS="
     --nproc_per_node $GPUS_PER_NODE \
@@ -28,7 +28,7 @@ torchrun $DISTRIBUTED_ARGS noise_generator/mmpr_finetune_ng_shuff.py \
     --num_train_epochs 1 \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 1 \
-    --gradient_accumulation_steps 8 \
+    --gradient_accumulation_steps 4 \
     --eval_strategy "no" \
     --save_strategy "steps" \
     --save_steps 100 \

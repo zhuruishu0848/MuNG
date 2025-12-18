@@ -446,36 +446,15 @@ def train():
         if training_args.gradient_checkpointing:
             model.enable_input_require_grads()
 
-
     if model_args.train_noise_generator:
         model.requires_grad_(False)
         for p in model.noise_generator.parameters():
             p.requires_grad = True
  
-
     # Load data
     data_module = make_supervised_data_module(
         tokenizer=tokenizer, data_args=data_args, max_len=training_args.model_max_length
     )
-
-    for name, param in model.named_parameters():
-        if not param.requires_grad:
-            # pass
-            print(f"{name} is frozen: shape={param.shape}, dtype:{param.dtype}")
-        else:
-            # pass
-            print(f"{name} is trainable: shape={param.shape}, requires_grad={param.requires_grad}")
-
-    trainable_params = 0
-    all_param = 0
-    for _, param in model.named_parameters():
-        all_param += param.numel()
-        if param.requires_grad:
-            trainable_params += param.numel()
-    try:
-        print(f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}")
-    except:
-        pass
 
     trainer = Trainer(
         model=model, tokenizer=tokenizer, args=training_args, **data_module

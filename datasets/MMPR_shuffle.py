@@ -4,18 +4,7 @@ import random
 from tqdm import tqdm
 random.seed(1299)
 
-def convert_mmpr_to_llava(mmpr_item, root_path, dataset_name, item_counter):
-    """
-    Convert a single MMPR item to LLaVA format with dataset-specific handling
-    
-    Args:
-        mmpr_item: Dictionary with MMPR format data
-        root_path: Root directory for images
-        dataset_name: Name of the dataset (for ID generation)
-        
-    Returns:
-        Dictionary in LLaVA format
-    """
+def convert_mmpr_to_qwen(mmpr_item, root_path, dataset_name, item_counter):
     if isinstance(mmpr_item["image"], list):
         image_tags = []
         for i, img_path in enumerate(mmpr_item["image"]):
@@ -26,27 +15,19 @@ def convert_mmpr_to_llava(mmpr_item, root_path, dataset_name, item_counter):
         img_path = mmpr_item["image"]
         clean_path = os.path.join(root_path, img_path)
 
-    llava_item = {
+    qwen_item = {
         "image":clean_path,
         "question":mmpr_item['question'],
         "answer":mmpr_item['chosen']
     }
     
-    return llava_item
+    return qwen_item
 
 def process_dataset(meta_entry, dataset_name):
-    """
-    Process a single dataset from the meta file
-    
-    Args:
-        meta_entry: Dictionary with dataset configuration
-        dataset_name: Key from the meta file
-        output_dir: Directory to save converted files
-    """
-    input_path = os.path.join("data_path", meta_entry["annotation"])
-    root_path = os.path.join("data_path", meta_entry["root"])
-    
-    llava_data = []
+    input_path = os.path.join("datasets", meta_entry["annotation"])
+    root_path = os.path.join("datasets", meta_entry["root"])
+
+    qwen_data = []
     with open(input_path, 'r') as f:
         lines = f.readlines()
         
@@ -59,24 +40,17 @@ def process_dataset(meta_entry, dataset_name):
         for line in tqdm(lines, desc=f"Processing {dataset_name}"):
             try:
                 mmpr_item = json.loads(line)
-                llava_item = convert_mmpr_to_llava(mmpr_item, root_path, dataset_name,item_counter)
-                llava_data.append(llava_item)
+                qwen_item = convert_mmpr_to_qwen(mmpr_item, root_path, dataset_name,item_counter)
+                qwen_data.append(qwen_item)
                 item_counter += 1
             except json.JSONDecodeError as e:
                 print(f"Error parsing line in {dataset_name}: {e}")
                 continue
     
-    print(f"Processed {len(llava_data)} items from {dataset_name}")
-    return llava_data
+    print(f"Processed {len(qwen_data)} items from {dataset_name}")
+    return qwen_data
 
 def main(meta_path, output_path):
-    """
-    Main conversion function
-    
-    Args:
-        meta_path: Path to the meta.json file
-        output_dir: Directory to save all converted files
-    """
     with open(meta_path, 'r') as f:
         meta = json.load(f)
 
@@ -95,12 +69,10 @@ def main(meta_path, output_path):
         for item in combined_data:
             f.write(json.dumps(item, ensure_ascii=False) + '\n')
 
-    
     print(f"Conversion complete! Saved {len(combined_data)} items to {output_path}")
 
-
 if __name__ == "__main__":
-    meta_path = "datasets/MMPR/meta.json" 
-    output_path = "datasets/MMPR/shuff_mmpr.jsonl"
+    meta_path = "datasets/MMPR-v1.1/meta.json" 
+    output_path = "datasets/MMPR-v1.1/shuff_mmpr.jsonl"
     
     main(meta_path, output_path)
